@@ -1,14 +1,12 @@
-from asyncio.proactor_events import _ProactorDuplexPipeTransport
-from re import T
 from tkinter import ttk, Text, messagebox
 import tkinter as tk
 from random import randint
 from ctypes import windll
 
-#improve resolution  
+# improve resolution
 try:
     windll.shcore.SetProcessDpiAwareness(1)
-except:
+finally:
     pass
 
 value1 = []
@@ -17,20 +15,22 @@ value2 = []
 click1 = 0
 click2 = 0 
 
+
 def draw_number1():
-    drawn_result1.delete('1.0', '3.0') #delete from 1 to 3 positions in window
+    drawn_result1.delete('1.0', '3.0')  # delete from 1 to 3 positions in window
     value1_output.delete('1.0', '10.0')
     drawn1 = randint(0, 100)
     value1.append(drawn1)
     value1_output.insert('1.0', value1)
 
     global click1
-    click1 = click1 + 1
+    click1 += 1
     if click1 == 3:
         sum_result1.insert('1.0', sum(value1))
         draw_button1.config(state='disabled')
     
     return drawn_result1.insert('1.0', drawn1)
+
 
 def draw_number2():
     drawn_result2.delete('1.0', '3.0')
@@ -39,76 +39,66 @@ def draw_number2():
     value2.append(drawn2)
     value2_output.insert('1.0', value2)
     global click2 
-    click2 = click2 + 1
+    click2 += 1
     if click2 == 3:
         sum_result2.insert('1.0', sum(value2))
         draw_button2.config(state='disabled')
 
     return drawn_result2.insert('1.0', drawn2)
 
+
+def reset():
+    global click1
+    global click2
+    click1 = 0
+    click2 = 0
+    drawn_result1.delete('1.0', '3.0')
+    value1_output.delete('1.0', '10.0')
+    drawn_result2.delete('1.0', '3.0')
+    value2_output.delete('1.0', '10.0')
+    sum_result1.delete('1.0', '10.0')
+    sum_result2.delete('1.0', '10.0')
+    value2.clear()
+    value1.clear()
+    draw_button1.config(state='normal')
+    draw_button2.config(state='normal')
+
+
+def reset_emoji():
+    global emoji1_win
+    global emoji2_win
+    emoji2.delete('1.0', '6.0')
+    emoji1.delete('1.0', '6.0')
+    emoji1_win = 0
+    emoji2_win = 0
+
+
 emoji1_win = 0
 emoji2_win = 0
 
+
 def win_streak():
-    global click1
-    global click2
-    global value2
-    global value1
-    global emoji1_win
-    global emoji2_win
-
     if click1 == 3 and click2 == 3 and sum(value1) > sum(value2):
-
         emoji1.insert('1.0', '🔥')
-        emoji1_win = emoji1_win + 1
+        global emoji1_win
+        emoji1_win += 1
 
         if emoji1_win == 3:
-            messagebox.showinfo(title= 'Game of luck', message= 'Win Player 1')
-            emoji2.delete('1.0', '6.0')
-            emoji1.delete('1.0', '6.0')
-            emoji1_win = 0
-            emoji2_win = 0
-            
-        click1 = 0
-        click2 = 0
-        drawn_result1.delete('1.0', '3.0')
-        value1_output.delete('1.0', '10.0')
-        drawn_result2.delete('1.0', '3.0')
-        value2_output.delete('1.0', '10.0')
-        sum_result1.delete('1.0', '10.0')
-        sum_result2.delete('1.0', '10.0')
-        value2.clear()
-        value1.clear()
-       
-        draw_button1.config(state='normal')
-        draw_button2.config(state='normal')
-    elif click1 == 3 and click2 == 3 and sum(value1) < sum(value2):
+            messagebox.showinfo(title='Game of luck', message='Win Player 1')
+            reset_emoji()
+        reset()
 
+    elif click1 == 3 and click2 == 3 and sum(value1) < sum(value2):
         emoji2.insert('1.0', '🔥')
-        emoji2_win = emoji2_win + 1
+        global emoji2_win
+        emoji2_win += 1
 
         if emoji2_win == 3:
-            messagebox.showinfo(title= 'Game of luck', message= 'Win Player 2')
-            emoji2.delete('1.0', '6.0')
-            emoji1.delete('1.0', '6.0')
-            emoji1_win = 0
-            emoji2_win = 0
-       
-        click1 = 0      
-        click2 = 0
-        drawn_result1.delete('1.0', '3.0')
-        value1_output.delete('1.0', '10.0')
-        drawn_result2.delete('1.0', '3.0')
-        value2_output.delete('1.0', '10.0')
-        sum_result1.delete('1.0', '10.0')
-        sum_result2.delete('1.0', '10.0')
-        value2.clear()
-        value1.clear()
+            messagebox.showinfo(title='Game of luck', message='Win Player 2')
+            reset_emoji()
+        reset()
 
-        draw_button1.config(state='normal')
-        draw_button2.config(state='normal')
-    
-    root.after(2000, win_streak) #refreshing 2000 ms
+    root.after(2000, win_streak)  # refreshing 2000 ms
 
 
 root = tk.Tk()
@@ -120,7 +110,7 @@ root.configure(background='steel blue')
 player_frame = tk.Frame(root)
 player_frame.pack(side='top')
 
-draw_frame = tk.Frame(root, bg= 'steel blue')
+draw_frame = tk.Frame(root, bg='steel blue')
 draw_frame.pack()
 
 drawn_numb = tk.Frame(root, bg='grey')
@@ -207,6 +197,6 @@ win_streak1.pack(side='left', ipadx=45)
 win_streak2 = tk.Label(win_streak_frame, text='Win streak', bg='gold')
 win_streak2.pack(ipadx=44)
 
-root.after(2000, win_streak) # run first time
+root.after(2000, win_streak)  # run first time
 
 root.mainloop()
