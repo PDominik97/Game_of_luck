@@ -186,7 +186,6 @@ class Gui(tk.Tk):
                 self.emoji1.delete('1.0', '6.0')
                 self.emoji1_win = 0
                 self.emoji2_win = 0
-
             self.reset()
         # refreshing
         self.after(2000, self.win_streak)
