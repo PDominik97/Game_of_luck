@@ -1,202 +1,195 @@
 from tkinter import ttk, Text, messagebox
 import tkinter as tk
 from random import randint
-from ctypes import windll
-
-# improve resolution
-try:
-    windll.shcore.SetProcessDpiAwareness(1)
-finally:
-    pass
-
-value1 = []
-value2 = []
-
-click1 = 0
-click2 = 0 
 
 
-def draw_number1():
-    drawn_result1.delete('1.0', '3.0')  # delete from 1 to 3 positions in window
-    value1_output.delete('1.0', '10.0')
-    drawn1 = randint(0, 100)
-    value1.append(drawn1)
-    value1_output.insert('1.0', value1)
+class Gui(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        # start setting
+        self.value1 = []
+        self.value2 = []
+        self.click1 = 0
+        self.click2 = 0
+        self.drawn1 = randint(0, 100)
+        self.drawn2 = randint(0, 100)
+        self.emoji1_win = 0
+        self.emoji2_win = 0
 
-    global click1
-    click1 += 1
-    if click1 == 3:
-        sum_result1.insert('1.0', sum(value1))
-        draw_button1.config(state='disabled')
-    
-    return drawn_result1.insert('1.0', drawn1)
+        self.title('Game of luck')
+        self.geometry('500x400')
+        self.resizable(width=False, height=False)
+        self.configure(background='steel blue')
+
+        self.player_frame = tk.Frame(self)
+        self.player_frame.pack(side='top')
+
+        self.draw_frame = tk.Frame(self, bg='steel blue')
+        self.draw_frame.pack()
+
+        self.drawn_numb = tk.Frame(self, bg='grey')
+        self.drawn_numb.pack()
+
+        self.drawn_number_frame = tk.Frame(self, bg='gold')
+        self.drawn_number_frame.pack()
+
+        self.value_output_frame = tk.Frame(self, bg='gold')
+        self.value_output_frame.pack()
+
+        self.your_numbers_frame = tk.Frame(self, bg='grey')
+        self.your_numbers_frame.pack()
+
+        self.sum_result_frame = tk.Frame(self, bg='grey')
+        self.sum_result_frame.pack()
+
+        self.game_result_frame = tk.Frame(self, bg='gold')
+        self.game_result_frame.pack()
+
+        self.emoji_frame = tk.Frame(self, bg='gold')
+        self.emoji_frame.pack()
+
+        self.win_streak_frame = tk.Frame(self)
+        self.win_streak_frame.pack()
+
+        self.label1 = tk.Label(self.player_frame, text="Player 1", bg='steel blue')
+        self.label1.pack(side='left', ipadx=50)
+
+        self.label2 = tk.Label(self.player_frame, text="Player 2", bg='steel blue')
+        self.label2.pack(ipadx=50)
+
+        self.draw_button1 = ttk.Button(self.draw_frame, text='draw')
+        self.draw_button1['command'] = self.draw_number1
+        self.draw_button1.pack(side='left', padx=(0, 70), pady=(10, 20))
+
+        self.draw_button2 = ttk.Button(self.draw_frame, text='draw')
+        self.draw_button2['command'] = self.draw_number2
+        self.draw_button2.pack(pady=(10, 20))
+
+        self.drawn_result1 = Text(self.drawn_numb, height=1, width=10)
+        self.drawn_result1.pack(side='left', padx=31, pady=(10, 0))
+
+        self.drawn_result2 = Text(self.drawn_numb, height=1, width=10)
+        self.drawn_result2.pack(padx=30, pady=(10, 0))
+
+        self.drawn_number1 = tk.Label(self.drawn_number_frame, text='Drawn number', bg='grey')
+        self.drawn_number1.pack(side='left', ipadx=30, pady=(0, 10))
+
+        self.drawn_number2 = tk.Label(self.drawn_number_frame, text='Drawn number', bg='grey')
+        self.drawn_number2.pack(ipadx=30, pady=(0, 10))
+
+        self.value1_output = Text(self.value_output_frame, height=1, width=10)
+        self.value1_output.pack(side='left', padx=31)
+
+        self.value2_output = Text(self.value_output_frame, height=1, width=10)
+        self.value2_output.pack(padx=30)
+
+        self.your_numbers1 = tk.Label(self.your_numbers_frame, text='Your numbers', bg='gold')
+        self.your_numbers1.pack(side='left', ipadx=34, pady=(0, 10))
+
+        self.your_numbers2 = tk.Label(self.your_numbers_frame, text='Your numbers', bg='gold')
+        self.your_numbers2.pack(ipadx=30, pady=(0, 10))
+
+        self.sum_result1 = Text(self.sum_result_frame, height=1, width=10)
+        self.sum_result1.pack(side='left', padx=31)
+
+        self.sum_result2 = Text(self.sum_result_frame, height=1, width=10)
+        self.sum_result2.pack(padx=30)
+
+        self.game_result1 = tk.Label(self.game_result_frame, text='Result!', bg='grey')
+        self.game_result1.pack(side='left', ipadx=45, pady=(0, 10))
+
+        self.game_result2 = tk.Label(self.game_result_frame, text='Result!', bg='grey')
+        self.game_result2.pack(ipadx=59, pady=(0, 10))
+
+        self.emoji1 = Text(self.emoji_frame, height=1, width=10)
+        self.emoji1.pack(side='left', padx=31)
+
+        self.emoji2 = Text(self.emoji_frame, height=1, width=10)
+        self.emoji2.pack(padx=30)
+
+        self.win_streak1 = tk.Label(self.win_streak_frame, text='Win streak', bg='gold')
+        self.win_streak1.pack(side='left', ipadx=40)
+
+        self.win_streak2 = tk.Label(self.win_streak_frame, text='Win streak', bg='gold')
+        self.win_streak2.pack(ipadx=44)
+
+        self.after(2000, Gui.win_streak(self))  # run first time
+
+    def draw_number1(self):
+        self.drawn_result1.delete('1.0', '3.0')  # delete from 1 to 3 positions in window
+        self.value1_output.delete('1.0', '10.0')
+        self.drawn1 = randint(0, 100)
+        self.value1.append(self.drawn1)
+        self.value1_output.insert('1.0', self.value1)
+
+        self.click1 += 1
+        if self.click1 == 3:
+            self.sum_result1.insert('1.0', sum(self.value1))
+            self.draw_button1.config(state='disabled')
+            self.drawn_result1.insert('1.0', self.drawn1)
+
+        return self.drawn1
+
+    def draw_number2(self):
+        self.drawn_result2.delete('1.0', '3.0')
+        self.value2_output.delete('1.0', '10.0')
+        self.drawn2 = randint(0, 100)
+        self.value2.append(self.drawn2)
+        self.value2_output.insert('1.0', self.value2)
+        self.click2 += 1
+        if self.click2 == 3:
+            self.sum_result2.insert('1.0', sum(self.value2))
+            self.draw_button2.config(state='disabled')
+            self.drawn_result2.insert('1.0', self.drawn2)
+
+        return self.drawn2
+
+    # DRY
+    def reset(self):
+        self.click1 = 0
+        self.click2 = 0
+        self.drawn_result1.delete('1.0', '3.0')
+        self.value1_output.delete('1.0', '10.0')
+        self.drawn_result2.delete('1.0', '3.0')
+        self.value2_output.delete('1.0', '10.0')
+        self.sum_result1.delete('1.0', '10.0')
+        self.sum_result2.delete('1.0', '10.0')
+        self.value2.clear()
+        self.value1.clear()
+        self.draw_button1.config(state='normal')
+        self.draw_button2.config(state='normal')
+
+    def win_streak(self):
+
+        if self.click1 == 3 and self.click2 == 3 and sum(self.value1) > sum(self.value2):
+
+            self.emoji1.insert('1.0', '🔥')
+            self.emoji1_win += 1
+
+            if self.emoji1_win == 3:
+                messagebox.showinfo(title='Game of luck', message='Win Player 1')
+                self.emoji2.delete('1.0', '6.0')
+                self.emoji1.delete('1.0', '6.0')
+                self.emoji1_win = 0
+                self.emoji2_win = 0
+
+            self.reset()
+
+        elif self.click1 == 3 and self.click2 == 3 and sum(self.value1) < sum(self.value2):
+
+            self.emoji2.insert('1.0', '🔥')
+            self.emoji2_win += 1
+
+            if self.emoji2_win == 3:
+                messagebox.showinfo(title='Game of luck', message='Win Player 2')
+                self.emoji2.delete('1.0', '6.0')
+                self.emoji1.delete('1.0', '6.0')
+                self.emoji1_win = 0
+                self.emoji2_win = 0
+
+            self.reset()
+        # refreshing
+        self.after(2000, self.win_streak)
 
 
-def draw_number2():
-    drawn_result2.delete('1.0', '3.0')
-    value2_output.delete('1.0', '10.0')
-    drawn2 = randint(0, 100)
-    value2.append(drawn2)
-    value2_output.insert('1.0', value2)
-    global click2 
-    click2 += 1
-    if click2 == 3:
-        sum_result2.insert('1.0', sum(value2))
-        draw_button2.config(state='disabled')
 
-    return drawn_result2.insert('1.0', drawn2)
-
-
-def reset():
-    global click1
-    global click2
-    click1 = 0
-    click2 = 0
-    drawn_result1.delete('1.0', '3.0')
-    value1_output.delete('1.0', '10.0')
-    drawn_result2.delete('1.0', '3.0')
-    value2_output.delete('1.0', '10.0')
-    sum_result1.delete('1.0', '10.0')
-    sum_result2.delete('1.0', '10.0')
-    value2.clear()
-    value1.clear()
-    draw_button1.config(state='normal')
-    draw_button2.config(state='normal')
-
-
-def reset_emoji():
-    global emoji1_win
-    global emoji2_win
-    emoji2.delete('1.0', '6.0')
-    emoji1.delete('1.0', '6.0')
-    emoji1_win = 0
-    emoji2_win = 0
-
-
-emoji1_win = 0
-emoji2_win = 0
-
-
-def win_streak():
-    if click1 == 3 and click2 == 3 and sum(value1) > sum(value2):
-        emoji1.insert('1.0', '🔥')
-        global emoji1_win
-        emoji1_win += 1
-
-        if emoji1_win == 3:
-            messagebox.showinfo(title='Game of luck', message='Win Player 1')
-            reset_emoji()
-        reset()
-
-    elif click1 == 3 and click2 == 3 and sum(value1) < sum(value2):
-        emoji2.insert('1.0', '🔥')
-        global emoji2_win
-        emoji2_win += 1
-
-        if emoji2_win == 3:
-            messagebox.showinfo(title='Game of luck', message='Win Player 2')
-            reset_emoji()
-        reset()
-
-    root.after(2000, win_streak)  # refreshing 2000 ms
-
-
-root = tk.Tk()
-root.title('Game of luck')
-root.geometry('500x400')
-root.resizable(width=False, height=False)
-root.configure(background='steel blue')
-
-player_frame = tk.Frame(root)
-player_frame.pack(side='top')
-
-draw_frame = tk.Frame(root, bg='steel blue')
-draw_frame.pack()
-
-drawn_numb = tk.Frame(root, bg='grey')
-drawn_numb.pack()
-
-drawn_number_frame = tk.Frame(root, bg='gold')
-drawn_number_frame.pack()
-
-value_output_frame = tk.Frame(root, bg='gold')
-value_output_frame.pack()
-
-your_numbers_frame = tk.Frame(root, bg='grey')
-your_numbers_frame.pack()
-
-sum_result_frame = tk.Frame(root, bg='grey')
-sum_result_frame.pack()
-
-game_result_frame = tk.Frame(root, bg='gold')
-game_result_frame.pack()
-
-emoji_frame = tk.Frame(root, bg='gold')
-emoji_frame.pack()
-
-win_streak_frame = tk.Frame(root)
-win_streak_frame.pack()
-
-Label1 = tk.Label(player_frame, text="Player 1", bg= 'steel blue')
-Label1.pack(side='left', ipadx=60)
-
-Label2 = tk.Label(player_frame, text="Player 2", bg= 'steel blue')
-Label2.pack(ipadx=50)
-
-draw_button1 = ttk.Button(draw_frame, text='draw', command=draw_number1)
-draw_button1.pack(side='left', padx=(0,70), pady=(10,20))
-
-draw_button2 = ttk.Button(draw_frame, text='draw', command=draw_number2)
-draw_button2.pack(pady=(10,20))
-
-drawn_result1 = Text(drawn_numb, height=1, width=10)
-drawn_result1.pack(side='left', padx=30, pady=(10,0))
-
-drawn_result2 = Text(drawn_numb, height=1, width=10)
-drawn_result2.pack(padx=30, pady=(10,0))
-
-drawed_number1 = tk.Label(drawn_number_frame, text='Drawn number', bg='grey')
-drawed_number1.pack(side='left', ipadx=30, pady=(0,10))
-
-drawed_number2 = tk.Label(drawn_number_frame, text='Drawn number', bg='grey')
-drawed_number2.pack(ipadx=30, pady=(0,10))
-
-value1_output = Text(value_output_frame, height=1, width=10)
-value1_output.pack(side='left',padx=30)
-
-value2_output = Text(value_output_frame, height=1, width=10)
-value2_output.pack(padx= 30)
-
-your_numbers1 = tk.Label(your_numbers_frame, text='Your numbers', bg='gold')
-your_numbers1.pack(side='left', ipadx=35, pady=(0,10))
-
-your_numbers2 = tk.Label(your_numbers_frame, text='Your numbers', bg='gold')
-your_numbers2.pack(ipadx=32, pady=(0,10))
-
-sum_result1 = Text(sum_result_frame, height=1, width=10)
-sum_result1.pack(side='left', padx= 30)
-
-sum_result2 = Text(sum_result_frame, height=1, width=10)
-sum_result2.pack(padx= 30)
-
-game_result1 = tk.Label(game_result_frame, text='Result!', bg='grey')
-game_result1.pack(side='left', ipadx=55, pady=(0,10))
-
-game_result2 = tk.Label(game_result_frame, text='Result!', bg='grey')
-game_result2.pack(ipadx=59, pady=(0,10))
-
-emoji1 = Text(emoji_frame, height=1, width=10)
-emoji1.pack(side='left', padx= 30)
-
-emoji2 = Text(emoji_frame, height=1, width=10)
-emoji2.pack(padx= 30)
-
-win_streak1 = tk.Label(win_streak_frame, text='Win streak', bg='gold')
-win_streak1.pack(side='left', ipadx=45)
-
-win_streak2 = tk.Label(win_streak_frame, text='Win streak', bg='gold')
-win_streak2.pack(ipadx=44)
-
-root.after(2000, win_streak)  # run first time
-
-root.mainloop()
